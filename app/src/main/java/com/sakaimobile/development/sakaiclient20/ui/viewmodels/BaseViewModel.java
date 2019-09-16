@@ -1,9 +1,10 @@
 package com.sakaimobile.development.sakaiclient20.ui.viewmodels;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
+import com.sakaimobile.development.sakaiclient20.networking.utilities.HeaderInterceptor;
 import com.sakaimobile.development.sakaiclient20.persistence.entities.Course;
 import com.sakaimobile.development.sakaiclient20.repositories.CourseRepository;
 
@@ -37,20 +38,34 @@ public abstract class BaseViewModel extends ViewModel {
     }
 
     void emitError(Throwable throwable) {
-        this.errorState.postValue(SakaiErrorState.FAILURE);
+        SakaiErrorState error =
+                throwable.getMessage().equals(HeaderInterceptor.SESSION_EXPIRED_ERROR)
+                        ? SakaiErrorState.SESSION_EXPIRED
+                        : SakaiErrorState.FAILURE;
+        this.errorState.postValue(error);
     }
 
-    public LiveData<List<List<Course>>> getCoursesByTerm(boolean refresh) {
+    public LiveData<List<List<Course>>> getCoursesByTerm() {
         if(this.coursesByTerm == null) {
             this.coursesByTerm = new MutableLiveData<>();
             loadCourses();
         }
 
-        if(refresh) {
-            refreshAllData();
-        }
-
         return this.coursesByTerm;
+    }
+
+    LiveData<List<Course>> getUnsortedCourses() {
+        MutableLiveData<List<Course>> allCourses = new MutableLiveData<>();
+        this.compositeDisposable.add(
+            this.courseRepository.getAllCourses()
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                        allCourses::postValue,
+                        Throwable::printStackTrace
+                )
+        );
+
+        return allCourses;
     }
 
     private void loadCourses() {

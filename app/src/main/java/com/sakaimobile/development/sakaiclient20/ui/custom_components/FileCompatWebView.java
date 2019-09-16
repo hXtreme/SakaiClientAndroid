@@ -6,8 +6,9 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.NestedScrollingChild;
+import androidx.core.view.NestedScrollingChild;
+import androidx.fragment.app.Fragment;
+
 import android.util.AttributeSet;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -147,6 +148,19 @@ public class FileCompatWebView extends WebView implements NestedScrollingChild {
 
                 view.loadUrl(url);
                 return true;
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                // Remove the annoying banner if possible (if no such DOM elements exist,
+                // nothing will happen, normal execution continues)
+                if(view != null)
+                    view.loadUrl("javascript:document.querySelector('nav#skipNav').remove();" +
+                            "document.querySelector('div.Mrphs-topHeader').remove();" +
+                            "document.querySelector('nav.Mrphs-siteHierarchy').remove();" +
+                            "document.querySelector('main#content').style.marginTop = 0;" +
+                            "document.querySelector('.workspace').style.paddingTop = 0;");
             }
         });
     }

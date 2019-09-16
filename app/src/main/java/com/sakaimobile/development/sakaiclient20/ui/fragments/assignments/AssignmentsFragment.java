@@ -1,10 +1,7 @@
 package com.sakaimobile.development.sakaiclient20.ui.fragments.assignments;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.sakaimobile.development.sakaiclient20.R;
 import com.sakaimobile.development.sakaiclient20.networking.utilities.SharedPrefsUtil;
@@ -36,13 +32,15 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import dagger.android.support.AndroidSupportInjection;
-import kotlin.Unit;
 
 /**
  * Created by Shoumyo Chakravorti.
  *
- * The main tab ({@link android.support.v4.app.Fragment}) that shows the user's
+ * The main tab ({@link Fragment}) that shows the user's
  * assignments. Assignments are always found within their respective term. If assignments
  * are sorted by date, they are not under any particular course header, but if
  * assignments are sorted by courses then they show up under their respective
@@ -51,11 +49,9 @@ import kotlin.Unit;
 
 public class AssignmentsFragment extends BaseFragment {
 
-    public static final String SHOULD_REFRESH = "SHOULD_REFRESH";
-
     /**
      * The {@link AndroidTreeView} that is represented by this
-     *  {@link android.support.v4.app.Fragment}.
+     *  {@link Fragment}.
      */
     private AndroidTreeView treeView;
 
@@ -66,13 +62,13 @@ public class AssignmentsFragment extends BaseFragment {
     private ProgressBar progressBar;
 
     /**
-     * If the {@link android.support.v4.app.Fragment} is specified to show assignments
+     * If the {@link Fragment} is specified to show assignments
      * sorted by their courses, this is the non-null list of courses sorted by their terms.
      */
     private List<List<Course>> courses;
 
     /**
-     * If the {@link android.support.v4.app.Fragment} is specified to show assignments
+     * If the {@link Fragment} is specified to show assignments
      * sorted by date, this is the list of assignments sorted by date within their repsective
      * terms.
      */
@@ -86,7 +82,6 @@ public class AssignmentsFragment extends BaseFragment {
     // selected to sort by a different type, the app would crash,
     // so we wait to show the sort menu group until the necessary data has loaded.
     private boolean hasFinishedInitialDataLoad = false;
-    private boolean shouldRefresh;
 
     /**
      * Whether the assignments should be shown as being sorted by course. {@code False} if
@@ -99,7 +94,6 @@ public class AssignmentsFragment extends BaseFragment {
         super.onCreate(savedInstanceState);
         // This fragment provides the option to sort assignments by course or date.
         setHasOptionsMenu(true);
-        this.shouldRefresh = getArguments().getBoolean(SHOULD_REFRESH);
     }
 
     @Nullable
@@ -127,15 +121,8 @@ public class AssignmentsFragment extends BaseFragment {
             return null;
         });
 
-        this.assignmentViewModel
-            .getCoursesByTerm(shouldRefresh)
+        this.assignmentViewModel.getCoursesByTerm()
             .observe(getViewLifecycleOwner(), courses -> {
-                // If we are refreshing, there will be one initial false emission
-                if(shouldRefresh) {
-                    shouldRefresh = false;
-                    return;
-                }
-
                 // Since new data has arrived, the old data might not be
                 // relevant any more, so we need to do both sorts (by course and by term) again.
                 this.courses = courses;
@@ -154,6 +141,7 @@ public class AssignmentsFragment extends BaseFragment {
 
                 this.renderTree();
                 this.progressBar.setVisibility(View.GONE);
+                this.treeContainer.setVisibility(View.VISIBLE);
 
                 // If this is the first time the observation is called,
                 // inflate the sort menu
@@ -222,6 +210,7 @@ public class AssignmentsFragment extends BaseFragment {
                 break;
             }
             case R.id.action_refresh: {
+                this.treeContainer.setVisibility(View.INVISIBLE);
                 this.progressBar.setVisibility(View.VISIBLE);
                 this.saveTreeState();
                 this.assignmentViewModel.refreshAllData();

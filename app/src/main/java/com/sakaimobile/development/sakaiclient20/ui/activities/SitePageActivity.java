@@ -3,11 +3,6 @@ package com.sakaimobile.development.sakaiclient20.ui.activities;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.sakaimobile.development.sakaiclient20.R;
@@ -26,6 +21,11 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 
 
 public class SitePageActivity extends AppCompatActivity {
@@ -104,12 +104,8 @@ public class SitePageActivity extends AppCompatActivity {
     }
 
     private void startSiteAnnouncementsFragment(Course course) {
-        HashMap<String, Course> siteIdToCourse = new HashMap<>();
-        siteIdToCourse.put(course.siteId, course);
-
         Bundle bun = new Bundle();
         bun.putString(getString(R.string.siteid_tag), course.siteId);
-        bun.putSerializable(getString(R.string.siteid_to_course_map), siteIdToCourse);
 
         AnnouncementsFragment fragment = new AnnouncementsFragment();
         fragment.setArguments(bun);

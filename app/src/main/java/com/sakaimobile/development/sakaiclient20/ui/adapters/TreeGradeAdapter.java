@@ -1,7 +1,5 @@
 package com.sakaimobile.development.sakaiclient20.ui.adapters;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,10 +8,11 @@ import android.widget.TextView;
 import com.sakaimobile.development.sakaiclient20.R;
 import com.sakaimobile.development.sakaiclient20.persistence.entities.Grade;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.List;
 import java.util.Locale;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class TreeGradeAdapter extends RecyclerView.Adapter<TreeGradeAdapter.GradeViewHolder> {
 

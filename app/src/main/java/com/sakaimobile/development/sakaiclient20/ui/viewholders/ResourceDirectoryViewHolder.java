@@ -3,7 +3,6 @@ package com.sakaimobile.development.sakaiclient20.ui.viewholders;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +10,8 @@ import android.widget.TextView;
 
 import com.sakaimobile.development.sakaiclient20.R;
 import com.unnamed.b.atv.model.TreeNode;
+
+import androidx.appcompat.widget.LinearLayoutCompat;
 
 public class ResourceDirectoryViewHolder extends TreeNode.BaseNodeViewHolder<ResourceDirectoryViewHolder.ResourceDirectoryItem> {
 
@@ -90,7 +91,7 @@ public class ResourceDirectoryViewHolder extends TreeNode.BaseNodeViewHolder<Res
      */
     private static int getColorForNode(TreeNode node, Resources resources) {
         // Get the default color
-        int sakaiMediumRed = resources.getColor(R.color.sakai_medium_red);
+        int sakaiMediumRed = resources.getColor(R.color.sakaiTint);
 
         // If this is a top-level node (level of 1 indicate a top-level resource directory),
         // then do not perform unnecessary computations
